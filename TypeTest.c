@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<string.h>
-
+#include<time.h>
 
 int main() {
     char key[] = "Hello World!";
@@ -9,7 +9,14 @@ int main() {
 
     printf("%s\n", key);
 
+    time_t seconds1;
+    seconds1 = time(NULL);
+
     scanf("%[^\n]s", i);
+
+    time_t seconds2;
+    seconds2 = time(NULL);
+
     l = strlen(i);
     for(int j = 0; j < l; j++){
         if(i[j] == key[j]) {
@@ -21,5 +28,5 @@ int main() {
         }
         
     }
-    printf("\nYour Score is %d", score);
+    printf("\nYour Score is %d\nTime taken is %d", score, seconds2 - seconds1);
 }

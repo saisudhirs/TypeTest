@@ -232,6 +232,7 @@ int freestyle() {
     
     printf("-----\nEnter the number of characters to be input: ");
     scanf("%d", &input_len);
+    float y_graph[input_len];
 
     strcpy(input, "");
 
@@ -258,6 +259,7 @@ int freestyle() {
         float time_min = inst_time / 60.0;
         float cpm = l2 / time_min;
         float wpm = word_count / time_min;
+        y_graph[input_len] = wpm;
 
         system("cls");
         printf("\n\nCharacters left: %d\n\nInput: %s", input_len, input);
@@ -277,7 +279,45 @@ int freestyle() {
     float cpm = l2 / time_min;
     float wpm = word_count / time_min;
 
-    printf("\n*****\n%s\nTotal Time taken: %.3f, CPM: %.2f, WPM: %.2f", input, time, cpm, wpm); 
+    printf("\n*****\n%s\nTotal Time taken: %.3f, CPM: %.2f, WPM: %.2f\n", input, time, cpm, wpm); 
 
+    //graph 
+    int op2;
+    printf("Do you want to see wpm graph? (1/0): \n");
+    scanf("%d", &op2);
+    printf("\n%d\n",op2);
+
+    if (op2 == 1) {
+
+    int width, height, q, k=0, y=0;   
+    width = l2;
+    height = 130; //largest displayable wpm
+    int y_label=height-1;
+
+    int graph[height][width];
+    memset(graph, -1, width*height*sizeof(int));
+
+    for(int a=0; a<width; a++){
+        q = y_graph[a];
+        graph[height-q-1][y] = 0;
+        y++;
+    }
+
+    for(int l=0; l<height; l++){
+        
+        printf("%.3d| ", y_label);
+        
+        for(int m=0; m<width; m++){
+            if(graph[l][m] < 0)
+                printf("%c ", '.');
+            else
+                printf("%d ", graph[l][m]);
+        }
+        printf("*\n");
+        y_label--;
+    }
+}
+else 
+    printf("Why?");
     return 0;
 }

@@ -11,7 +11,7 @@ int paragraph();
 int freestyle();
 
 
-long long current_timestamp() {
+long current_timestamp() {
     struct timeval te; 
     gettimeofday(&te, NULL); // get current time
     long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
@@ -84,42 +84,44 @@ else {
         start = current_timestamp();
 
         
-        int z = -1;
-        while(z<l1) {
-            //printf("%c\n", key[z]);
-            
-            int y = z;
-            while(key[y] != ' '){
-                printf("%c", key[y]);
-                y++;    
-            }
-            printf("\n");
-            scanf("%c", &input[z]);
-            
-            if(input[z] == ' '){
-                word_count++;
-            }
-            z++;
-            
-            }
-        
-        stop = current_timestamp();
+        int z = 2;
+        char space[2];
+        int l1_temp1 = l1;
 
-        printf("\n\n***\n\n");
+        while (l1_temp1>0) {
+            system("cls");
 
-    
-    
-    l2 = strlen(input);
-    for(int letter = 0; letter < l1; letter++){
-        if(input[letter] == key[letter]) {
-            score += 1;
-            printf("%c == %c, Score = %d\n",input[letter], key[letter], score);
+
+            int l1_temp2 = l1_temp1;
+            while(key[l1 - l1_temp2] != ' ') {
+                printf("%c", key[l1 - l1_temp2]);
+                l1_temp2--;
+            }
+                        printf("%d %d", l1_temp1, l1_temp2);
+            printf("\n%s\n%s", key, input);
+
+            space[0] = getch();
+            printf("%s\n", space);            
+
+            strcat(input, space);
+
+            
+
+            if (key[l1- l1_temp1] != ' ') {
+                if (space[0] != ' ')
+                    l1_temp1--;
+                else
+                    l1_temp1 = l1_temp2;
+            
+            } else if(key[l1- l1_temp1] != '*')
+                break;
+
+
+        }
         
-        } else {
-            printf("%c != %c\n",input[letter], key[letter]);
-        }   
-    }
-    
+
+        /*
+
     //stats calculations
     float time = (stop - start)/1000.0;
     int errors = l1 - score;
@@ -136,6 +138,8 @@ else {
     printf("\nAccuracy: %.2f%%, CPM: %.2f, WPM: %.2f, Errors: %d", accuracy, cpm, wpm, errors);
 
     return 0;
+
+    */
 
 }
 
@@ -161,38 +165,79 @@ else if (op1 == 4)
 else {
         printf("Wrong input");
 
-}   
+}
+
+
+    long long inst_start, inst_stop, start, stop;
+    float inst_time, time;
+    int input_len;
+    char input[1000], a[2];
+    int l1, l2, word_count = 1, score = 0;
+    //char key[] = "Type this and this also.";
+    l1 = strlen(key);
+    input_len = l1;
+
+
+
+
+    printf("Text: %s\n", key);
+
+    system("cls");
     
+    printf("\n\nCharacters left: %d\n\nKey:   %s\n\nInput: %s", input_len, key, input);
+    printf("\n***\n%s\nTime taken: 0.000, CPM: 0.00, WPM: 0.00, Words: 0", input);
 
-        char input[100];
-        int l1, l2, score = 0;
-        l1 = strlen(key);
+    float y_graph[input_len];
 
-        printf("%s\n", key);
+    strcpy(input, "");
 
-        long long start, stop;
-        int word_count = 0;
+
+    //main clock start
+    start = current_timestamp();
+
+    for(input_len; input_len > 0; input_len--) {
         
-        start = current_timestamp();
 
         
-        int z = -1;
-        while(z<l1) {
-            scanf("%c", &input[z]);
-            
-            if(input[z] == ' '){
-                word_count++;
-            }
-            z++;
-            
-            }
-        
-        stop = current_timestamp();
+        inst_start = current_timestamp();
+        a[0] = getch();
+        inst_stop = current_timestamp();
 
-        printf("\n\n***\n\n");
+        //word counter
+        if(a[0] == ' '){
+            word_count++;
+        }
+        strcat(input, a);
 
+        //instantaneous speed calc
+        l2 = strlen(input);
+        inst_time = (inst_stop - start)/1000.0;
+        float time_min = inst_time / 60.0;
+        float cpm = l2 / time_min;
+        float wpm = word_count / time_min;
+        y_graph[input_len] = wpm;
+
+        system("cls");
     
-    
+        printf("\n\nCharacters left: %d\n\nKey:   %s\n\nInput: %s", input_len, key, input);
+
+        printf("\n***\n%s\nTime taken: %.3f, CPM: %.2f, WPM: %.2f, Words: %d", input, inst_time, cpm, wpm, word_count); 
+        
+    }
+
+    //main clock stop
+    stop = current_timestamp();
+
+    system("cls");
+
+    l2 = strlen(input);
+    time = (stop - start)/1000.0;
+    float time_min = time / 60.0;
+    float cpm = l2 / time_min;
+    float wpm = word_count / time_min;
+
+    printf("\n*****\n%s\nTotal Time taken: %.3f, CPM: %.2f, WPM: %.2f\n", input, time, cpm, wpm); 
+
     l2 = strlen(input);
     for(int letter = 0; letter < l1; letter++){
         if(input[letter] == key[letter]) {
@@ -205,21 +250,58 @@ else {
     }
     
     //stats calculations
-    float time = (stop - start)/1000.0;
+    time = (stop - start)/1000.0;
     int errors = l1 - score;
     float accuracy = ((score) * 100) / l1;
-    float time_min = time / 60.0;
-    float cpm = score / time_min;
-    float wpm = word_count / time_min;
+    time_min = time / 60.0;
+    cpm = score / time_min;
+    wpm = word_count / time_min;
 
 
     //stats output
     printf("\n\n***\n");
     printf("\nYour Score is %d/%d\nTime taken is %.3f seconds\n", score, l1, time );
 
-    printf("\nAccuracy: %.2f%%, CPM: %.2f, WPM: %.2f, Errors: %d", accuracy, cpm, wpm, errors);
+    printf("\nAccuracy: %.2f%%, CPM: %.2f, WPM: %.2f, Errors: %d\n\n", accuracy, cpm, wpm, errors);
+
+    //graph 
+    char op2;
+    printf("Do you want to see wpm graph? (y/n): \n");
+    scanf("%s", &op2);
+
+    if (op2 == 'y' || op2 == 'Y') {
+
+    int width, height, q, k=0, y=0;   
+    width = l2;
+    height = 130; //largest displayable wpm
+    int y_label=height-1;
+
+    int graph[height][width];
+    memset(graph, -1, width*height*sizeof(int));
+
+    for(int a=0; a<width; a++){
+        q = y_graph[a];
+        graph[height-q-1][y] = 0;
+        y++;
+    }
+
+    for(int l=0; l<height; l++){
+        
+        printf("%.3d| ", y_label);
+        
+        for(int m=0; m<width; m++){
+            if(graph[l][m] < 0)
+                printf("%c ", '.');
+            else
+                printf("%d ", graph[l][m]);
+        }
+        printf("*\n");
+        y_label--;
+    }
+    }
 
     return 0;
+
 }
 
 int freestyle() {
@@ -282,12 +364,11 @@ int freestyle() {
     printf("\n*****\n%s\nTotal Time taken: %.3f, CPM: %.2f, WPM: %.2f\n", input, time, cpm, wpm); 
 
     //graph 
-    int op2;
-    printf("Do you want to see wpm graph? (1/0): \n");
-    scanf("%d", &op2);
-    printf("\n%d\n",op2);
+    char op2;
+    printf("Do you want to see wpm graph? (y/n): \n");
+    scanf("%s", &op2);
 
-    if (op2 == 1) {
+    if (op2 == 'y' || op2 == 'Y') {
 
     int width, height, q, k=0, y=0;   
     width = l2;
@@ -316,8 +397,7 @@ int freestyle() {
         printf("*\n");
         y_label--;
     }
-}
-else 
-    printf("Why?");
+    }
+
     return 0;
 }

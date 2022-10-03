@@ -10,9 +10,23 @@
 int instant();
 int paragraph();
 int freestyle();
+int timed(int);
 void graphing(int, float y_graph[]);
 void loading();
+int randomize(int lower, int upper){
+    int num;
 
+    srand(time(NULL));
+    num = (rand() %(upper - lower + 1)) + lower;
+
+    return num;
+}
+
+//Struct definition
+struct line{
+    int n;          //Word Count
+    char l[200];    //Sentence
+};
 
 long current_timestamp() {
     struct timeval te; 
@@ -34,9 +48,9 @@ int main() {
     scanf("%c", &op0);
 
     switch(op0) {
-        //case '1':
-            //timed();
-            //break;
+        case '1':
+            timed(10);
+            break;
         case '2':
             instant();
             break;
@@ -53,6 +67,171 @@ int main() {
     }
 
 }
+
+int timed(int time){
+    time *= 1000;
+    int n=0, score=0;
+    char s[2];
+    long long start, current, inst_start, inst_stop;
+    float mid=0;
+    
+
+    start = current_timestamp();
+    
+    // File opening randomizer
+    int randnum, len;
+    char connum[2];
+    char file_ext[] = ".txt";
+    char file_prefix[] = "Assets/Timed/";
+
+    randnum = randomize(0, 1);
+    itoa(randnum, connum, 10);
+    strcat(connum, file_ext);
+    strcat(file_prefix, connum);
+
+    // FILE *f = fopen(file_prefix, "r");
+    FILE *f = fopen("0.txt", "r");
+    char line[100];
+    struct line lines[50];      
+    //Array of structs of lines
+    int size, count, j=0;
+    //Populates line array
+    while(fgets(line, 100, f)){
+        count = 0;
+
+        for(int i=0; i<strlen(line); i++){
+            if(line[i] == ' '){
+                count++;
+            }
+        }
+
+        lines[j].n = count;
+        strcpy(lines[j].l, line);
+        j++;
+    }
+
+    size = sizeof(lines)/sizeof(lines[0]);
+    count = 0;
+
+    char current_line[500];
+    int current_words;
+    int word_count = 0, l1;
+
+    int flag = 1;
+    char input[200];
+    int input_len = strlen(input);
+    float y_graph[input_len];
+
+
+
+    loading();
+
+    while(flag){
+        current = current_timestamp();
+        mid = current - start;
+        if(mid > time)
+            break;
+
+        strcpy(current_line, lines[count].l);
+        current_words = lines[count].n;
+        printf("\n%s", current_line);
+
+        strcpy(input, "");
+
+        l1 = strlen(current_line);
+
+        j = 0;
+        int count2 = 0;
+        
+        char* word = strtok(current_line, " ");
+        word_count += 1;
+
+        while(j < current_words){
+            inst_start = current_timestamp();
+            s[0] = getch();
+            inst_stop = current_timestamp();
+
+            current = current_timestamp();
+
+            strcat(input, s);
+            mid = current - start;
+            if(mid > time)
+                break;
+
+            if(s[0] == ' '){
+                word = strtok(NULL, " ");
+                word_count += 1;
+                count2 = 0;
+                j++;
+                continue;
+            }
+
+            else if(s[0] == word[count2]){
+                score += 1;
+            }
+
+
+
+            count2++;
+
+             //instantaneous speed calc
+            input_len = strlen(input);
+            float inst_time = (inst_stop - start)/1000.0;
+            float time_min = inst_time / 60.0;
+            float cpm = score / time_min;
+            float wpm = word_count / time_min;
+            y_graph[input_len] = wpm;
+
+            system("cls");
+        
+            printf("\n\nCharacters left: %d\n\nKey:   %s\n\nInput: %s", input_len-1, current_line, input);
+
+            printf("\n\n***\n\nTime taken: %.3f, CPM: %.2f, WPM: %.2f, Words: %d", inst_time, cpm, wpm, word_count); 
+        
+    }
+
+            
+        
+
+        count++;
+        system("cls");
+
+        current = current_timestamp();
+        mid = current - start;
+        if(mid > time)
+            break;
+    }
+
+    printf("\nYour score is: %d\n", score);
+
+    return 0;
+
+    time = (current - start)/1000.0;
+    int errors = l1 - score;
+    float accuracy = ((score) * 100) / l1;
+    float time_min = time / 60.0;
+    float cpm = score / time_min;
+    float wpm = word_count / time_min;
+
+    system("cls");
+    //stats output
+    printf("\n\n*****\n");
+    printf("\nYour Score is %d/%d\nTime taken is %.3f seconds\n", score, l1, time );
+
+    printf("\nAccuracy: %.2f%%\nCPM: %.2f\nWPM: %.2f\nErrors: %d\n\n*****\n\n", accuracy, cpm, wpm, errors);
+
+    //graph 
+    char op2;
+    printf("Do you want to see wpm graph? (y/n): \n");
+    scanf("%s", &op2);
+
+    if (op2 == 'y' || op2 == 'Y') 
+        graphing(l1, y_graph);
+
+    return 0;
+}
+
+
 
 int instant() {
      char op1;
